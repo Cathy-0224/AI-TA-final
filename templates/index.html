@@ -1,0 +1,107 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>語音參數設定</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body class="p-4">
+  <div class="container">
+    <h3>語音辨識助理-設定參數</h3>
+
+    <form action="/settings" method="post" id="settingsForm">
+      <div class="mb-3">
+        <label for="role" class="form-label">角色定位與目標</label>
+        <textarea id="role" name="role" class="form-control" rows="2">角色定位： 你是一位熟悉數位產業人才發展與AI技術趨勢的專家。 
+目標： 擔任AI人才指引論壇的與談人，並根據現場討論提供專業見解。</textarea>
+      </div>
+
+      <div class="mb-3">
+        <label for="context" class="form-label">核心任務</label>
+        <textarea id="context" name="context" class="form-control" rows="2">根據現場各產業專家的意見逐字稿，總結討論內容，提供專業的觀點並提出發展AI人才生態系的建議。
+        </textarea>
+      </div>
+
+      <div class="mb-3">
+        <label for="focus" class="form-label">需考量的資訊與限制</label>
+        <textarea id="focus" name="focus" class="form-control" rows="2">1. 請將逐字稿內容及以下資訊作為主要參考依據，不要自行新增內容。
+2. 需考量到產官學研各方的利害關係。</textarea>
+      </div>
+
+      <div class="mb-3">
+        <label for="custom" class="form-label">建議生成的產出格式(不建議變動)</label>
+        <textarea id="custom" name="custom" class="form-control" rows="3">產出格式要求：
+1. 請列5點就好，以數字標號跟主題標示來生成完整建議，一個主題標示下最多100字，不用開場白與結語。</textarea>
+      </div>
+
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-success">儲存設定(前往辨識)</button>
+        <!-- 另存新檔按鈕 -->
+        <button type="button" id="exportBtn" class="btn btn-outline-primary">另存新檔（匯出）</button>
+        <p class="mb-0 text-muted small align-self-end">如下次還需使用同種參數，建議匯出檔案以利下次使用</p>
+      </div>
+      <div>
+      </div>
+    </form>
+
+    <hr />
+  </div>
+
+  <script>
+  // 產生 local 時區的 YYYYMMDD-HHMMSS 時間戳（好閱讀、檔名友善）
+  function makeTimestamp() {
+    const d = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    const Y = d.getFullYear();
+    const M = pad(d.getMonth() + 1);
+    const D = pad(d.getDate());
+    const h = pad(d.getHours());
+    const m = pad(d.getMinutes());
+    const s = pad(d.getSeconds());
+    return `${Y}${M}${D}-${h}${m}${s}`;
+  }
+
+  document.getElementById('exportBtn').addEventListener('click', (e) => {
+    e.preventDefault();
+    const role = document.getElementById('role').value || '';
+    const context = document.getElementById('context').value || '';
+    const focus = document.getElementById('focus').value || '';
+    const custom = document.getElementById('custom').value || '';
+
+    const content =
+`角色定位與目標:
+${role}
+
+核心任務:
+${context}
+
+需考量的資訊與限制:
+${focus}
+
+建議生成的產出格式:
+${custom}
+`;
+
+    const ts = makeTimestamp(); // ex: 20250813-091530
+    const filename = `語音辨識助理參數_${ts}.txt`;
+
+    // 加上 UTF-8 BOM (\uFEFF) 以避免某些平板/記事本顯示亂碼
+    const blob = new Blob(["\uFEFF" + content], { type: 'text/plain;charset=utf-8' });
+
+    if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+      window.navigator.msSaveOrOpenBlob(blob, filename);
+    } else {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    }
+  });
+  </script>
+</body>
+</html>

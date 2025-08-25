@@ -1,0 +1,8 @@
+flask>=2.x.y
+google-genai>=0.x.y
+google-generativeai
+sentence-transformers>=2.x.y
+
+faiss-cpu
+
+

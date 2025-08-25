@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: voice-summary-app
+    env: python
+    buildCommand: ""
+    startCommand: "python app.py"
+    envVars:
+      - key: GOOGLE_API_KEY
+        value: ""  # <- 安全做法，上傳後再手動填入 Render 後台
