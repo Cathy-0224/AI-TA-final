@@ -1,8 +1,5 @@
-flask>=2.x.y
-google-genai>=0.x.y
+flask>=2.3.0
+google-genai>=0.7.0
 google-generativeai
-sentence-transformers>=2.x.y
-
+sentence-transformers>=2.2.0
 faiss-cpu
-
-
